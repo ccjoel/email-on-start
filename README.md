@@ -10,10 +10,12 @@ sudo ln -s <repo_dir>/email_on_start.service /etc/systemd/system/.
 ```
 
 You should also edit that service file to set up the following environment variables:
+```
 Environment="EMAIL_USER="
 Environment="EMAIL_PASSWD="
 Environment="DEST_EMAIL="
 Environment="EMAIL_LOG_FILE="
+```
 
 and these flags to use the actual working directory and files:
 
@@ -26,4 +28,4 @@ then, you should enable your service:
 sudo systemctl enable email_on_start
 ```
 
-This is not meant to be a terribly reusable script, just thought I'd share. If you need to change he subject or email message contents, you should edit emailstart.py
+This is not meant to be a terribly reusable script, just thought I'd share. If you need to change the subject or email message contents, you should edit emailstart.py directly.
