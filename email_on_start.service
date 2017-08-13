@@ -1,5 +1,6 @@
 [Unit]
 Description=Simple script that emails me when server restarts
+After=network.target
 
 [Service]
 Environment="EMAIL_USER="
@@ -9,3 +10,6 @@ Environment="EMAIL_LOG_FILE="
 WorkingDirectory=/home/ria/email-on-start
 ExecStart=/usr/bin/python /home/ria/email-on-start/emailstart.py
 ExecStop=/usr/bin/whoami
+
+[install]
+wantedby=multi-user.target
