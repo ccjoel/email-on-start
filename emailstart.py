@@ -13,32 +13,39 @@ toaddr = os.environ['DEST_EMAIL']
 logfile = os.environ['EMAIL_LOG_FILE']
 timeft = '%Y-%m-%d %H:%M:%S %Z%z'
 
-logger = logging.getLogger('emailstart')
-hdlr = logging.FileHandler(logfile)
+log = logging.getLogger('emailstart')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
-logger.setLevel(logging.DEBUG)
 
-logger.info('Server restarted. Sending email alert.')
+# file log
+filehr = logging.FileHandler(logfile)
+filehr.setFormatter(formatter)
+log.addHandler(filehr)
+# console stdout log
+stdout = logging.StreamHandler()
+stdout.setFormatter(formatter)
+log.addHandler(stdout)
 
+# Setting log level
+log.setLevel(logging.DEBUG)
+
+log.info('Server restarted. Sending email alert.')
 server = SMTP('smtp.gmail.com', 587)
 server.starttls()
 
 try:
-    logger.info('Logging in to smtp server.')
+    log.info('Logging in to smtp server.')
     server.login(fromaddr, os.environ['EMAIL_PASSWD'])
 except SMTPAuthenticationError as err:
-    logger.info('Unable to login.\n\nResponse: {}'.format(err))
+    log.info('Unable to login.\n\nResponse: {}'.format(err))
     code = err[0]
     if code == 535:
-        logger.info('Wrong username or password. Check your password.')
+        log.info('Wrong username or password. Check your password.')
     if code == 534:
-        logger.info('Google did not authorize access to smtp for this IP. Authorize on mobile/web account settings.')
+        log.info('Google did not authorize access to smtp for this IP. Authorize on mobile/web account settings.')
     server.quit()
     exit(1)
 
-logger.info('Successfully logged in.')
+log.info('Successfully logged in.')
 
 time_now = datetime.now(timezone('US/Eastern'))
 msg = MIMEMultipart()
@@ -50,7 +57,7 @@ msg.attach(MIMEText(body, 'plain'))
 
 server.sendmail(fromaddr, toaddr, msg.as_string())
 
-logger.info('Email sent. Goodbye!')
+log.info('Email sent. Goodbye!')
 
 server.quit()
 exit(0)
